@@ -44,3 +44,5 @@ def send_pdf():
       "body": body,
       "headers": dict(e.headers)
     }), 500
+  except Exception as e : 
+    return jsonify({"error" : e})

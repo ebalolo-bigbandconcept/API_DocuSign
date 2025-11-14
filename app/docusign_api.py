@@ -18,7 +18,7 @@ def get_docusign_token(data):
     if DOCUSIGN_TOKEN_CACHE["access_token"] and DOCUSIGN_TOKEN_CACHE["expires_at"] > time.time():
         return DOCUSIGN_TOKEN_CACHE["access_token"]
 
-    private_key = base64.b64decode(data.get("private_key")).decode('utf-8')
+    private_key = base64.b64decode(data.get("private_key_b64")).encode('utf-8')
     logging.info(private_key)
     integration_key = data.get("integration_key")
     logging.info(integration_key)

@@ -20,8 +20,8 @@ def get_docusign_token(data):
 
     private_key = base64.b64decode(data.get("private_key_b64")).decode('utf-8')
     logging.info(private_key)
-    integration_key = data.get("integration_key")
-    logging.info(integration_key)
+    integrator_key = data.get("integrator_key")
+    logging.info(integrator_key)
     user_id = data.get("user_id")    # MUST be the GUID of the user
     logging.info(user_id)
     auth_server = data.get("auth_server")  # ex: "account-d.docusign.com"
@@ -34,7 +34,7 @@ def get_docusign_token(data):
 
     try:
         token_response = api_client.request_jwt_user_token(
-            client_id=integration_key,
+            client_id=integrator_key,
             user_id=user_id,
             oauth_host_name=auth_server,
             private_key_bytes=private_key.encode("utf-8"),

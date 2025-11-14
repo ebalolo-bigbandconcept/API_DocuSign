@@ -21,7 +21,7 @@ def get_docusign_token(data):
     private_key = base64.b64decode(data.get("private_key_b64")).decode('utf-8')
     integrator_key = data.get("integrator_key")
     user_id = data.get("user_id")
-    auth_server = "https://account-d.docusign.com" if os.getenv("DOCUSIGN_ENV")=="demo" else "https://account.docusign.com"
+    auth_server = "account-d.docusign.com" if os.getenv("DOCUSIGN_ENV")=="demo" else "account.docusign.com"
 
     logging.info("Requesting DocuSign JWT token")
 

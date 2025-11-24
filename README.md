@@ -40,7 +40,7 @@ sudo docker run hello-world   # Test rapide
 
 ## 3. Initialisation DocuSign eSign
 
-Si vous n'avez pas d'intégration DocuSign eSign : 
+Si vous n'avez pas d'intégration DocuSign eSign :
 
 1. Créez une application intégrée sur [DocuSign Developer](https://developers.docusign.com/).  
 2. Allez dans **My Apps & Keys** -> **Add App and Integration Key**.  
@@ -89,11 +89,13 @@ sudo ufw enable
 git clone https://github/AnakinGig/DocuSignApi
 sudo docker compose -f docker-compose.prod.yml up --build
 ```
+
 Le serveur tourne ensuite sur port 5001.
 
 ## 6. Comment utiliser l’API
 
 Votre application cliente (webshop, bot, React, PHP…) doit envoyer :
+
 - un fichier PDF (file)
 - les infos du signataire (email, name)
 - la configuration d’intégration (integrator_key, user_id, account_id, private_key_b64)
@@ -113,11 +115,12 @@ curl -X POST https://votre-domaine.com/send-pdf \
 
 ## 7. Résultat
 
-L'API renvoie : 
+L'API renvoie :
 
 ```json
 {
-  "envelope_id": "12345678-ABCD-..."
+  "envelope_id": "1"
 }
 ```
+
 Vous pouvez suivre la signature dans votre tableau de bord DocuSign.

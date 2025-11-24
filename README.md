@@ -103,7 +103,7 @@ Votre application cliente (webshop, bot, React, PHP…) doit envoyer :
 ### Example cURL
 
 ```bash
-curl -X POST https://votre-domaine.com/send-pdf \
+curl -X POST https://votre-domaine.com/api/send-pdf \
   -F "file=@document.pdf" \
   -F "email=test@demo.com" \
   -F "name=Nom Prenom" \

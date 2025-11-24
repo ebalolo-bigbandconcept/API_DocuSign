@@ -132,6 +132,10 @@ curl -X POST https://votre-domaine.com/api/send-pdf \
   -F "account_id=xxxx" \
 ```
 
+Integrator_key : Clé d’intégration DocuSign de l'intégration  
+User_id : ID utilisateur DocuSign
+Account_id : ID compte DocuSign
+
 ## 7. Résultat
 
 L'API renvoie :

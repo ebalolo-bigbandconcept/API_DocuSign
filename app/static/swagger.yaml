@@ -1,0 +1,96 @@
+openapi: 3.0.4
+info:
+  title: Docusign eSign REST API
+  description: |-
+  version: 1.0.0
+servers:
+  - url: http://192.168.10.110/api/
+tags:
+  - name: pdf
+    description: Use docusign esign REST API to send pdf to the client
+    externalDocs:
+      description: Github
+      url: https://github.com/AnakinGig/DocuSignApi
+paths:
+  /send-pdf:
+    post:
+      tags:
+        - pdf
+      summary: Send a pdf to a specified client
+      description: |
+        Send a pdf to a specified client, with specified credentials.
+
+        ### cURL example
+        ```bash
+        curl -X POST "http://192.168.10.110/api/send-pdf" \
+          -F "file=@/path/to/your/file.pdf" \
+          -F "integrator_key=YOUR_INTEGRATOR_KEY" \
+          -F "account_id=YOUR_ACCOUNT_ID" \
+          -F "user_id=YOUR_USER_ID" \
+          -F "private_key_b64=YOUR_BASE64_PRIVATE_KEY" \
+          -F "email=your.email@example.com" \
+          -F "name=Your Name"
+        ```
+      operationId: sendPdf
+      requestBody:
+        description: Send a pdf to a client
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Send-pdf'
+        required: true
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Send-pdf'
+        '400':
+          description: Missing data
+        '500':
+          description: Docusign error
+
+components:
+  schemas:
+    Send-pdf:
+      required:
+        - file
+        - email
+        - name
+        - integrator_key
+        - user_id
+        - account_id
+        - private_key_b64
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+          example: document.pdf
+        email:
+          type: string
+          example: example@mail.com
+        name:
+          type: string
+          example: Nom Prénom
+        integrator_key:
+          type: string
+          example: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        user_id:
+          type: string
+          example: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        account_id:
+          type: string
+          example: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        private_key_b64:
+          type: string
+          format: base64
+          example: your_private_key_in_base64
+
+  securitySchemes:
+    api_key:
+      type: apiKey
+      in: header
+      name: api_key

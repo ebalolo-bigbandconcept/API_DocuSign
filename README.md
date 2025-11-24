@@ -113,6 +113,24 @@ curl -X POST https://votre-domaine.com/api/send-pdf \
   -F "private_key_b64={private_key_content_encoded_base64_utf-8}" \
 ```
 
+> **Attention :** votre clé privée doit obligatoirement être encodée en Base64 UTF-8.
+> Le serveur n’accepte pas de clé privée brute.  
+> Si vous envoyez la clé sans encodage Base64, l’authentification échouera et vous obtiendrez une erreur.
+
+### Pour encoder votre clé privée en Base64 sur Linux
+
+```bash
+base64 -w 0 private.pem > private_b64.txt
+```
+
+### Sur Windows (PoserShell)
+
+```bash
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("private.pem")) > private_b64.txt
+```
+
+Ensuite, copiez le contenu du fichier *private_b64.txt* dans le champ *private_key_b64* de votre requête.
+
 ## 7. Résultat
 
 L'API renvoie :

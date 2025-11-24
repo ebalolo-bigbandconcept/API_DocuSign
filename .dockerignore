@@ -1,6 +1,5 @@
 .git
 .gitignore
-.env
 private.key
 public.key
 DocuSignApi.code-workspace

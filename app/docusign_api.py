@@ -5,6 +5,24 @@ import base64, time, logging, os
 
 docusign_bp = Blueprint("docusign", __name__)
 
+_CACHED_PRIVATE_KEY = None
+
+def load_private_key():
+  global _CACHED_PRIVATE_KEY
+  if _CACHED_PRIVATE_KEY:
+    return _CACHED_PRIVATE_KEY
+  
+  private_key_path = os.getenv("DOCUSIGN_PRIVATE_KEY_PATH")
+  if not private_key_path:
+    raise ValueError("DOCUSIGN_PRIVATE_KEY_PATH environment variable is not set")
+  
+  if not os.path.isfile(private_key_path):
+    raise FileNotFoundError(f"Private key file not found at path: {private_key_path}")
+  
+  with open(private_key_path, "rb") as f:
+    _CACHED_PRIVATE_KEY = f.read()
+  return _CACHED_PRIVATE_KEY
+
 DOCUSIGN_TOKEN_CACHE = {
   "access_token": None,
   "expires_at": 0
@@ -15,7 +33,7 @@ def get_docusign_token(data):
   if DOCUSIGN_TOKEN_CACHE["access_token"] and DOCUSIGN_TOKEN_CACHE["expires_at"] > time.time():
     return DOCUSIGN_TOKEN_CACHE["access_token"]
 
-  private_key = base64.b64decode(data.get("private_key_b64")).decode('utf-8')
+  private_key = load_private_key()
   integrator_key = data.get("integrator_key")
   user_id = data.get("user_id")
   auth_server = "account-d.docusign.com" if os.getenv("DOCUSIGN_ENV")=="demo" else "account.docusign.com"

@@ -70,7 +70,7 @@ Pour finaliser l’intégration DocuSign, vous devez accepter le consentement OA
    ```
 
 2. Ouvrez cette URL dans votre navigateur et suivez les instructions pour accepter le consentement.
-   > Le consentement DocuSign n'est à faire **qu'une seule fois** pour initialiser l'accès via votre compte.
+   > Le consentement DocuSign n'est à faire **qu'une seule fois par utilisateur de l'application** pour initialiser l'accès via votre compte.
 
 ## 5. Mise en place du serveur API
 
@@ -83,11 +83,28 @@ sudo ufw allow 5001
 sudo ufw enable
 ```
 
-### Lancement de l'API
+### Cloner le dépôt
 
 ```bash
 git clone https://github/AnakinGig/DocuSignApi
-sudo docker compose -f docker-compose.prod.yml up --build
+cd DocuSignApi
+```
+
+### Sécuriser la clé privée DocuSign
+
+Copiez votre clée privée `private.pem` à la racine du projet.
+
+Créez un secret Docker avec cette clé :
+
+```bash
+docker swarm init # Initialiser le mode swarm si ce n'est pas déjà fait
+docker secret create docusign_private_key private.pem
+```
+
+### Déploiement avec Docker
+
+```bash
+docker stack deploy -c docker-compose.prod.yml docusign_stack
 ```
 
 Le serveur tourne ensuite sur port 5001.
@@ -110,26 +127,7 @@ curl -X POST https://votre-domaine.com/api/send-pdf \
   -F "integrator_key=xxxx" \
   -F "user_id=xxxx" \
   -F "account_id=xxxx" \
-  -F "private_key_b64={private_key_content_encoded_base64_utf-8}" \
 ```
-
-> **Attention :** votre clé privée doit obligatoirement être encodée en Base64 UTF-8.
-> Le serveur n’accepte pas de clé privée brute.  
-> Si vous envoyez la clé sans encodage Base64, l’authentification échouera et vous obtiendrez une erreur.
-
-### Pour encoder votre clé privée en Base64 sur Linux
-
-```bash
-base64 -w 0 private.pem > private_b64.txt
-```
-
-### Sur Windows (PoserShell)
-
-```bash
-[Convert]::ToBase64String([IO.File]::ReadAllBytes("private.pem")) > private_b64.txt
-```
-
-Ensuite, copiez le contenu du fichier `private_b64.txt` dans le champ >`private_key_b64` de votre requête.
 
 ## 7. Résultat
 

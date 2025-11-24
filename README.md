@@ -106,37 +106,11 @@ sudo rm private.pem
 ### Déploiement avec Docker
 
 ```bash
+sudo docker build -f dockerfile.prod -t docusign-api:prod .
 sudo docker stack deploy -c docker-compose.prod.yml docusign_stack
 ```
 
 Le serveur tourne ensuite sur port 5001.
-
-Si vous voulez lancer l'API en local sans Swarm (développement), placez votre `private.pem` à la racine du projet. `docker-compose.yml` est configuré pour monter le fichier `./private.pem` comme secret local et exposera la clé à l'application sur `/run/secrets/docusign_private_key`.
-
-Exemple (Compose V2) :
-
-```bash
-docker compose up --build
-# ou avec l'ancien binaire docker-compose
-docker-compose up --build
-```
-
-Pour déployer avec `docker stack` (Swarm), construisez et taggez d'abord l'image produit, ou poussez-la vers un registre.
-
-Construire l'image locale et déployer (image locale must exist on swarm nodes):
-
-```bash
-docker build -f dockerfile.prod -t docusign-api:prod .
-sudo docker stack deploy -c docker-compose.prod.yml docusign_stack
-```
-
-Si vous utilisez un registre (Docker Hub / private registry), taggez et poussez l'image, puis mettez à jour `docker-compose.prod.yml`'s `image:` value to match `youruser/docusign-api:prod` before `docker stack deploy`:
-
-```bash
-docker build -f dockerfile.prod -t youruser/docusign-api:prod .
-docker push youruser/docusign-api:prod
-sudo docker stack deploy -c docker-compose.prod.yml docusign_stack
-```
 
 ## 6. Comment utiliser l’API
 

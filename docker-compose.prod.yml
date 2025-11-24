@@ -19,7 +19,7 @@ services:
 
 networks:
   default:
-    driver: bridge
+    driver: overlay
 
 secrets:
   docusign_private_key:

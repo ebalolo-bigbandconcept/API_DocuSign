@@ -5,13 +5,13 @@ info:
     This API allows you to send PDFs to clients using DocuSign eSign.
   version: 1.0.0
 servers:
-  - url: http://192.168.10.110/api/
+  - url: http://195.110.34.168/api/
 tags:
   - name: pdf
     description: Use docusign esign REST API to send pdf to the client
     externalDocs:
       description: Github
-      url: https://github.com/AnakinGig/DocuSignApi
+      url: https://github.com/ebalolo-bigbandconcept/API_DocuSign
 paths:
   /send-pdf:
     post:
@@ -23,7 +23,7 @@ paths:
 
         ### cURL example
         ```bash
-        curl -X POST "http://192.168.10.110/api/send-pdf" \
+        curl -X POST "http://195.110.34.168/api/send-pdf" \
           -F "file=@/path/to/your/file.pdf" \
           -F "email=your.email@example.com" \
           -F "name=Your Name" \

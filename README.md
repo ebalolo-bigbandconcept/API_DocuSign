@@ -87,8 +87,8 @@ sudo ufw enable
 ### Cloner le dépôt
 
 ```bash
-git clone https://github/AnakinGig/DocuSignApi
-cd DocuSignApi
+git clone https://github.com/ebalolo-bigbandconcept/API_DocuSign
+cd API_DocuSign
 ```
 
 ### Sécuriser la clé privée DocuSign

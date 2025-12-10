@@ -2,14 +2,14 @@ openapi: 3.0.4
 info:
   title: Docusign eSign REST API
   description: |-
-    This API allows you to send PDFs to clients using DocuSign eSign.
+    Cette API vous permet d'envoyer des PDFs aux clients via DocuSign eSign.
   version: 1.0.0
 servers:
   - url: http://195.110.34.168:5001/api/
   - url: http://localhost:5001/api/
 tags:
   - name: pdf
-    description: Use docusign esign REST API to send pdf to the client
+    description: Utiliser l'API REST docusign esign pour envoyer un PDF au client
     externalDocs:
       description: Github
       url: https://github.com/ebalolo-bigbandconcept/API_DocuSign
@@ -18,24 +18,24 @@ paths:
     post:
       tags:
         - pdf
-      summary: Send a pdf to a specified client
+      summary: Envoyer un PDF à un client spécifié
       description: |
-        Send a pdf to a specified client, with specified credentials.
+        Envoyer un PDF à un client spécifié, avec les identifiants requis.
 
-        ### cURL example
+        ### Exemple cURL
         ```bash
         curl -X POST "http://195.110.34.168:5001/api/send-pdf" \
           -F "file=@/path/to/your/file.pdf" \
           -F "email=your.email@example.com" \
-          -F "name=Your Name" \
-          -F "integrator_key=YOUR_INTEGRATOR_KEY" \
-          -F "user_id=YOUR_USER_ID" \
-          -F "account_id=YOUR_ACCOUNT_ID"
+          -F "name=Votre Nom" \
+          -F "integrator_key=VOTRE_INTEGRATOR_KEY" \
+          -F "user_id=VOTRE_USER_ID" \
+          -F "account_id=VOTRE_ACCOUNT_ID"
         ```
       operationId: sendPdf
       requestBody:
         description: |
-          Send a PDF to a client with the required credentials.
+          Envoyer un PDF à un client avec les identifiants requis.
         content:
           multipart/form-data:
             schema:
@@ -44,7 +44,7 @@ paths:
 
       responses:
         '200':
-          description: Successful operation
+          description: Opération réussie
           content:
             application/json:
               schema:
@@ -54,9 +54,9 @@ paths:
                     type: string
                     example: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
         '400':
-          description: Missing data or file
+          description: Données ou fichier manquants
         '500':
-          description: Docusign error
+          description: Erreur DocuSign
 
 components:
   schemas:

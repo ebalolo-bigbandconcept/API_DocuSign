@@ -1,11 +1,14 @@
 from flask import Blueprint, request, jsonify
 from docusign_esign import ApiClient, ApiException, EnvelopesApi
 from docusign_esign.models import Document, EnvelopeDefinition, Signer, SignHere, Tabs, Recipients
-import base64, time, logging, os
+import base64, time, logging, os, json
 
 docusign_bp = Blueprint("docusign", __name__)
 
 _CACHED_PRIVATE_KEY = None
+
+logging.basicConfig(level=logging.INFO)
+logging.info("DocuSign API initialized")
 
 def load_private_key():
   global _CACHED_PRIVATE_KEY
@@ -67,58 +70,101 @@ def get_docusign_token(data):
     logging.error("DocuSign JWT error: %s", e)
     raise e
 
-@docusign_bp.route("/send-pdf", methods=["POST"])
-def send_pdf():
+# Prepare document object
+def get_document():
+  # Fetch PDF file
+  file = request.files.get("file")
+  if not file:
+    return jsonify({"error": "Missing PDF file"}), 400
+  logging.info("Received file")
+
+  # Convert PDF to Base64
+  pdf_base64 = base64.b64encode(file.read()).decode("utf-8")
+
+  document = Document(
+    document_base64=pdf_base64,
+    name="Document à signer",
+    file_extension="pdf",
+    document_id="1"
+  )
+
+  logging.info("Prepared document for DocuSign")
+  return document
+
+# Prepare SignHere tab
+def get_sign_here_tab():
+  sign_here = SignHere(
+    anchor_string="SIGN_HERE",
+    anchor_units="pixels",
+    anchor_x_offset="100",
+    anchor_y_offset="100"
+  )
+  return sign_here
+
+# Prepare signers object
+def get_signers(data, sign_here):
+  signers_data = data.get("signers")
+  if not signers_data:
+    return jsonify({"error": "Missing signers information"}), 400
+  
+  # Format signers into json
   try:
-    data = request.form
-    logging.info("Received data")
-    file = request.files.get("file")
-    logging.info("Received file")
+    if not signers_data.strip().startswith('['):
+      signers_data = f'[{signers_data}]'
+    signers_data = json.loads(signers_data)
 
-    if not data:
-      return jsonify({"error": "Missing data"}), 400
+  except json.JSONDecodeError:
+    logging.error("Failed to decode signers JSON string: %s", signers_data)
+    return jsonify({"error": "Invalid signers format. Must be a valid JSON string."}), 400
+  
+  # Create every signers
+  signers = []
+  for i, signer_info in enumerate(signers_data):
+    recipient_id = str(i + 1)
 
-    if not file:
-      return jsonify({"error": "Missing PDF file"}), 400
-
-    # Extract signer info
-    email = data.get("email")
-    name = data.get("name")
-
-    # Convert PDF to Base64
-    pdf_base64 = base64.b64encode(file.read()).decode("utf-8")
-
-    document = Document(
-      document_base64=pdf_base64,
-      name="Document à signer",
-      file_extension="pdf",
-      document_id="1"
-    )
-
-    # Place signature using anchor
-    sign_here = SignHere(
-      anchor_string="SIGN_HERE",
-      anchor_units="pixels",
-      anchor_x_offset="100",
-      anchor_y_offset="100"
-    )
+    email = signer_info.get("email")
+    name = signer_info.get("name")
 
     signer = Signer(
       email=email,
       name=name,
-      recipient_id="1",
-      routing_order="1",
-      tabs=Tabs(sign_here_tabs=[sign_here])
+      recipient_id=recipient_id,
+      routing_order=1,
     )
+    signers.append(signer)
 
-    recipients = Recipients(signers=[signer])
-
-    envelope_definition = EnvelopeDefinition(
-      email_subject="Veuillez signer le document",
-      documents=[document],
-      recipients=recipients,
-      status="sent"
+    signer.tabs = Tabs(
+      sign_here_tabs=[sign_here]
     )
+    logging.info(f"Added signer {i}: {name} <{email}>")
+  
+  logging.info(f"Total signers added: {len(signers)}")
+  return signers
+
+# Prepare envelope definition
+def get_envelope_definition(document, recipients):
+  envelope_definition = EnvelopeDefinition(
+    email_subject="Veuillez signer le document",
+    documents=[document],
+    recipients=recipients,
+    status="sent"
+  )
+  return envelope_definition
+
+@docusign_bp.route("/send-pdf", methods=["POST"])
+def send_pdf():
+  try:
+    # Fetching data
+    data = request.form
+    if not data:
+      return jsonify({"error": "Missing data"}), 400
+    logging.info("Received data")
+
+    document = get_document()
+    sign_here = get_sign_here_tab()
+    signers = get_signers(data, sign_here)
+    recipients = Recipients(signers=signers)
+    envelope_definition = get_envelope_definition(document, recipients) 
 
     # Get DocuSign token
     access_token = get_docusign_token(data)

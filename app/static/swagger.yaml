@@ -6,6 +6,7 @@ info:
   version: 1.0.0
 servers:
   - url: http://195.110.34.168:5001/api/
+  - url: http://localhost:5001/api/
 tags:
   - name: pdf
     description: Use docusign esign REST API to send pdf to the client
@@ -62,8 +63,7 @@ components:
     Send-pdf:
       required:
         - file
-        - email
-        - name
+        - signers
         - integrator_key
         - user_id
         - account_id
@@ -74,14 +74,16 @@ components:
           format: binary
           example: document.pdf
         signers:
-          type: object
-          properties:
-            email:
-              type: string
-              example: example@mail.com
-            name:
-              type: string
-              example: Nom Prénom
+          type: array
+          items:
+            type: object
+            properties:
+              email:
+                type: string
+                example: example@mail.com
+              name:
+                type: string
+                example: Nom Prénom
         integrator_key:
           type: string
           example: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx

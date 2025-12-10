@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_swagger_ui import get_swaggerui_blueprint
 from .docusign_api import docusign_bp
+from .swagger_setup import init_swagger
 import os
 
 def create_app():
@@ -19,7 +20,7 @@ def create_app():
   app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10 MB
   
   app.register_blueprint(docusign_bp, url_prefix="/api")
-  app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+  init_swagger(app)
   
   @app.route('/')
   def helloWord():

@@ -1,6 +1,7 @@
 docusign-esign==3.24.0
 Flask==3.1.2
 flask-cors==6.0.1
+flasgger==0.9.5
 flask-swagger-ui==3.36.0
 python-dotenv==1.1.1
 pyyaml==6.0.1

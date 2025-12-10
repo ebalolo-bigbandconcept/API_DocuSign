@@ -1,8 +1,7 @@
 openapi: 3.0.4
 info:
   title: Docusign eSign REST API
-  description: |-
-    Cette API vous permet d'envoyer des PDFs aux clients via DocuSign eSign.
+  description: Cette API vous permet d'envoyer des PDFs aux clients via DocuSign eSign.
   version: 1.0.0
 servers:
   - url: http://195.110.34.168:5001/api/
@@ -10,32 +9,17 @@ servers:
 tags:
   - name: pdf
     description: Utiliser l'API REST docusign esign pour envoyer un PDF au client
-    externalDocs:
-      description: Github
-      url: https://github.com/ebalolo-bigbandconcept/API_DocuSign
+externalDocs:
+  description: Github
+  url: https://github.com/ebalolo-bigbandconcept/API_DocuSign
 paths:
   /send-pdf:
     post:
       tags:
         - pdf
       summary: Envoyer un PDF à un client spécifié
-      description: |
-        Envoyer un PDF à un client spécifié, avec les identifiants requis.
-
-        ### Exemple cURL
-        ```bash
-        curl -X POST "http://195.110.34.168:5001/api/send-pdf" \
-          -F "file=@/path/to/your/file.pdf" \
-          -F "email=your.email@example.com" \
-          -F "name=Votre Nom" \
-          -F "integrator_key=VOTRE_INTEGRATOR_KEY" \
-          -F "user_id=VOTRE_USER_ID" \
-          -F "account_id=VOTRE_ACCOUNT_ID"
-        ```
       operationId: sendPdf
       requestBody:
-        description: |
-          Envoyer un PDF à un client avec les identifiants requis.
         content:
           multipart/form-data:
             schema:
@@ -80,7 +64,7 @@ components:
             properties:
               email:
                 type: string
-                example: example@mail.com
+                example: example@gmail.com
               name:
                 type: string
                 example: Nom Prénom

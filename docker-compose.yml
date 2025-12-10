@@ -14,7 +14,7 @@ services:
       - docusign_private_key
     restart: unless-stopped
 networks:
-  main:
+  default:
     driver: bridge
 
 secrets:

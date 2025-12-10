@@ -73,12 +73,15 @@ components:
           type: string
           format: binary
           example: document.pdf
-        email:
-          type: string
-          example: example@mail.com
-        name:
-          type: string
-          example: Nom Prénom
+        signers:
+          type: object
+          properties:
+            email:
+              type: string
+              example: example@mail.com
+            name:
+              type: string
+              example: Nom Prénom
         integrator_key:
           type: string
           example: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx

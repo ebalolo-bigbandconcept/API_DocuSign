@@ -67,7 +67,6 @@ def get_docusign_token(data):
     logging.error("DocuSign JWT error: %s", e)
     raise e
 
-
 @docusign_bp.route("/send-pdf", methods=["POST"])
 def send_pdf():
   try:

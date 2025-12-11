@@ -99,13 +99,16 @@ def get_sign_here_tab():
     anchor_x_offset="100",
     anchor_y_offset="100"
   )
+  
+  logging.info("Prepared sign here tab for DocuSign")
   return sign_here
 
 # Prepare signers object
 def get_signers(data, sign_here):
   signers_data = data.get("signers")
   if not signers_data:
-    return jsonify({"error": "Missing signers information"}), 400
+    logging.error("Missing signers information")
+    raise ValueError("Missing signers information")
   
   # Format signers into json
   try:
@@ -115,7 +118,7 @@ def get_signers(data, sign_here):
 
   except json.JSONDecodeError:
     logging.error("Failed to decode signers JSON string: %s", signers_data)
-    return jsonify({"error": "Invalid signers format. Must be a valid JSON string."}), 400
+    raise ValueError("Invalid signers format. Must be valid JSON string.")
   
   # Create every signers
   signers = []
@@ -149,6 +152,8 @@ def get_envelope_definition(document, recipients):
     recipients=recipients,
     status="sent"
   )
+  
+  logging.info("Prepared envelope definition for DocuSign")
   return envelope_definition
 
 @docusign_bp.route("/send-pdf", methods=["POST"])
@@ -156,8 +161,6 @@ def send_pdf():
   try:
     # Fetching data
     data = request.form
-    if not data:
-      return jsonify({"error": "Missing data"}), 400
     logging.info("Received data")
 
     document = get_document()
@@ -184,6 +187,9 @@ def send_pdf():
     logging.info(f"Envelope sent with ID: {results.envelope_id}")
 
     return jsonify({"envelope_id": results.envelope_id}), 200
+    
+  except ValueError as e:
+    return jsonify({"error": str(e)}), 400
 
   except ApiException as e:
     logging.error("DocuSign error: %s", e)

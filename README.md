@@ -112,15 +112,17 @@ sudo docker stack deploy -c docker-compose.prod.yml docusign_stack
 
 Le serveur tourne ensuite sur port 5001.
 
-## 6. Comment utiliser l’API
+## 6. Comment utiliser l'API
+
+### 6.1. Envoi de PDF basique
 
 Votre application cliente (webshop, bot, React, PHP…) doit envoyer :
 
 - un fichier PDF (file)
 - les infos du signataire (email, name)
-- la configuration d’intégration (integrator_key, user_id, account_id, private_key_b64)
+- la configuration d'intégration (integrator_key, user_id, account_id, private_key_b64)
 
-### Example cURL
+#### Example cURL
 
 ```bash
 curl -X POST https://votre-domaine.com/api/send-pdf \
@@ -132,9 +134,65 @@ curl -X POST https://votre-domaine.com/api/send-pdf \
   -F "account_id=xxxx" \
 ```
 
-Integrator_key : Clé d’intégration DocuSign de l'intégration  
+Integrator_key : Clé d'intégration DocuSign de l'intégration  
 User_id : ID utilisateur DocuSign
 Account_id : ID compte DocuSign
+
+### 6.2. Intégration avec Webhooks (Sites Externes)
+
+L'API supporte maintenant les webhooks pour notifier automatiquement votre site externe lorsqu'un document est signé, refusé ou annulé.
+
+#### Configuration requise
+
+1. **Variable d'environnement** : Ajoutez dans votre fichier `.env` :
+
+   ```bash
+   INTERNAL_API_BASE_URL=https://votre-domaine-public.com
+   ```
+
+2. **Endpoint de callback** : Créez un endpoint sur votre site pour recevoir les notifications.
+
+#### Envoi avec callback URL
+
+```bash
+curl -X POST https://votre-domaine.com/api/send-pdf \
+  -F "file=@document.pdf" \
+  -F "signers=[{\"email\":\"test@demo.com\",\"name\":\"Nom Prenom\"}]" \
+  -F "integrator_key=xxxx" \
+  -F "user_id=xxxx" \
+  -F "account_id=xxxx" \
+  -F "callback_url=https://votre-site-externe.com/api/docusign-callback"
+```
+
+#### Réponse de l'API
+
+```json
+{
+  "envelope_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "webhook_url": "https://votre-domaine.com/api/webhook/docusign",
+  "tracking_id": 1
+}
+```
+
+#### Notification reçue sur votre callback
+
+Lorsque le document est signé, votre endpoint recevra automatiquement :
+
+```json
+{
+  "envelope_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "status": "completed",
+  "requester_host": "https://votre-site-externe.com",
+  "signed_at": "2025-12-16T12:45:30",
+  "created_at": "2025-12-16T10:30:00"
+}
+```
+
+**Status possibles** :
+
+- `completed` : Tous les signataires ont signé
+- `declined` : Un signataire a refusé de signer
+- `voided` : L'enveloppe a été annulée
 
 ## 7. Résultat
 

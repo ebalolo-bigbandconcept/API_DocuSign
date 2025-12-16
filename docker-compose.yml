@@ -10,9 +10,16 @@ services:
       - .env
     environment:
       - DOCUSIGN_PRIVATE_KEY_PATH=/run/secrets/docusign_private_key
+      - DATABASE_URL=sqlite:////app/data/docusign_tracking.db
     secrets:
       - docusign_private_key
+    volumes:
+      - docusign_data:/app/data
     restart: unless-stopped
+volumes:
+  docusign_data:
+    driver: local
+
 networks:
   default:
     driver: bridge

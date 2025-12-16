@@ -1,10 +1,25 @@
 from flask import Flask
 from flask_swagger_ui import get_swaggerui_blueprint
 from .docusign_api import docusign_bp
+from .models import db
 import os
 
 def create_app():
   app = Flask(__name__)
+  
+  # Database configuration
+  app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    'DATABASE_URL', 
+    'sqlite:///docusign_tracking.db'
+  )
+  app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+  
+  # Initialize database
+  db.init_app(app)
+  
+  # Create tables
+  with app.app_context():
+    db.create_all()
   
   SWAGGER_URL = '/docs'
   API_URL = '/static/swagger.yaml'
